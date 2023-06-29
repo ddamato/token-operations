@@ -1,0 +1,40 @@
+{
+  "name": "token-operations",
+  "version": "0.0.0",
+  "description": "",
+  "main": "./dist/index.cjs",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run clean && unbuild",
+    "clean": "rm -rf ./dist",
+    "test": "npm run build && mocha",
+    "prepublishOnly": "npm test",
+    "version": "auto-changelog -p && git add CHANGELOG.md"
+  },
+  "keywords": [],
+  "author": "Donnie D'Amato <fauxserious@gmail.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ddamato/token-operations.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ddamato/token-operations/issues"
+  },
+  "homepage": "https://github.com/ddamato/token-operations#readme",
+  "devDependencies": {
+    "auto-changelog": "^2.4.0",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "unbuild": "^1.2.1"
+  }
+}
