@@ -1,4 +1,31 @@
-import proxy from './proxy.js';
+const proxy = {
+    Math: {
+        ...Math,
+        parseInt: parseInt,
+        add: (...args) => args.reduce((total, num) => total + Number(num), 0),
+        multiply: (...args) => args.reduce((total, num) => total * Number(num), 0)
+    },
+    String: {
+        ...String,
+        concat: (joiner, ...args) => args.join(joiner),
+        match: (str, rgx) => {
+            const result = str.match(rgx);
+            return result?.length ? result[1] : '';
+        }
+    },
+    Import: {
+        operations: async (path, ...args) => {
+            try {
+                const json = await import(path);
+                const operations = JSON.parse(json);
+                if (!Array.isArray(operations)) throw new Error(`import is not Array: ${path}`);
+                return args.concat(operations);
+            } catch (err) {
+                throw new Error(err);
+            }
+        }
+    }
+}
 
 let processRegistry;
 
@@ -8,27 +35,34 @@ function executeOperation(store, operation) {
     }
     const [operationReference, ...args] = operation;
     const inputs = args.map((arg) => arg in store ? store[arg] : arg);
-    return getOperation(operationReference)(...inputs);
+    let value = getOperation(operationReference)(...inputs);
+
+    if (operationReference === 'Import.operation') {
+        return execute(value, store.$value);
+    }
+    return value;
+}
+
+function execute(operations, $value) {
+    let idx;
+    return operations.reduce((completed, operation, index) => {
+        idx = `$${index}`;
+        return { ...completed, [idx]: executeOperation(completed, operation) }
+    }, { $value })[idx];
 }
 
 function executeOperations(path, tokens) {
-    const token = getPath(path, tokens);
+    const { $operations, $value } = getPath(path, tokens);
 
     // if operations have not been executed
     if (!processRegistry.has(path)) {
         processRegistry.set(path, true);
-        let idx;
-        
-        const _store = token.$operations.reduce((steps, operation, index) => {
-          idx = `$${index}`;
-          return { ...steps, [idx]: executeOperation(steps, operation) }
-        }, { $value: getValue(path, tokens) });
-
+        const value = execute($operations, getValue(path, tokens));
         processRegistry.set(path, false);
-        return _store[idx];
+        return value;
     }
-    
-    return token.$value;
+
+    return $value;
 }
 
 function getOperation(operationReference) {
