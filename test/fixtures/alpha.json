@@ -1,0 +1,17 @@
+{
+    "primary-color-overlay": {
+      "$type": "color",
+      "$value": "#fffc00",
+      "$operations": [
+        0.5,
+        ["String.match", "$value", "#([0-9A-Fa-f]{2})"],
+        ["String.match", "$value", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"],
+        ["String.match", "$value", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"],
+        ["Math.parseInt", "$1", 16],
+        ["Math.parseInt", "$2", 16],
+        ["Math.parseInt", "$3", 16],
+        ["String.concat", ",", "$4", "$5", "$6", "$0"],
+        ["String.concat", "", "rgba(", "$7", ")"]
+      ]
+    }
+  }
