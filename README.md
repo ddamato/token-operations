@@ -1,6 +1,6 @@
 # token-operations
 
-This project aims to illustrate the concept of "[Token Operations](https://blog.damato.design/posts/token-operations/)"; the ability to include step-by-step instructions in order to transform a given token value into another.
+This project aims to illustrate the concept of "[Token Operations](https://blog.damato.design/posts/token-operations/)"; the ability to include step-by-step instructions in order to transform a given [design token](https://tr.designtokens.org/format/#design-token) value into another.
 
 ## Usage
 
@@ -46,7 +46,7 @@ Within the `$operations` key is an ordered set of instructions to take to create
   }
 }
 ```
-While this looks immediately overwhelming, **this project recommends that operations are sharable**. So to make the concept more approachable, the following is also possible:
+While this looks immediately overwhelming, **this project recommends that operations are sharable**. So to make the concept more approachable, the following is also possible with an identical result:
 
 ```json
 {
