@@ -59,4 +59,17 @@ While this looks immediately overwhelming, **this project recommends that operat
   }
 }
 ```
-In this example, the operations are abstracted to an import with the remaining array values as arguments for the operation to complete.
+
+In this example, the operations are abstracted to an import with the remaining array values as arguments for the operation to complete. This will also allow for custom shared operations to be imported also:
+
+```json
+{
+  "primary-color-overlay": {
+    "$type": "color",
+    "$value": "#fffc00",
+    "$operations": [
+      ["Import.operations", "./my-custom-alpha-operations.json", 0.5]
+    ]
+  }
+}
+```
