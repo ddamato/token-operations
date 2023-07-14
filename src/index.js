@@ -48,24 +48,25 @@ function getValue(path, tokens) {
 
     const re = /\{([^)]+)\}/;
     if (re.test($value)) {
-        const [, refPath] = re.exec($value) || [];
-        if (refPath) {
-            if (processRegistry.get(refPath)) {
+        const [, alias] = re.exec($value) || [];
+        if (alias) {
+            if (processRegistry.get(alias)) {
                 throw new Error(`Looping operational path at: ${path}. Terminating process.`);
             }
-            const { $operations } = getPath(refPath, tokens)
+            const { $operations } = getPath(alias, tokens)
             if ($operations) {
-                return executeOperations(refPath, tokens);
+                return executeOperations(alias, tokens);
             }
-            return getValue(refPath, tokens);
+            return getValue(alias, tokens);
         }
-        console.warn(`Unresolved path at: ${path}`);
+        console.warn(`Unresolved alias at: ${alias}`);
     }
     return $value;
 }
 
 function traverse(path, tree) {
     const target = path ? getPath(path, tree) : tree;
+    if (!target || typeof target !== 'object') return;
     Object.entries(target).forEach(([name, token]) => {
         const concat = [path, name].filter(Boolean).join('.');
         if (token.$value && token.$operations) {

@@ -14,8 +14,15 @@ describe('token-operations', function () {
     });
 
     it('should resolve operations', function () {
-        const tokens = read('alpha.json');
+        const tokens = read('basic.json');
         expect(tokens['primary-color-overlay'].$value).to.equal('#fffc00');
+        const resolved = tokenOperations(tokens);
+        expect(resolved['primary-color-overlay'].$value).to.equal('rgba(255,252,0,0.5)');
+    });
+
+    it('should resolve $value alias before operations', function () {
+        const tokens = read('alias.json');
+        expect(tokens['primary-color-overlay'].$value).to.equal('{color.yellow.500}');
         const resolved = tokenOperations(tokens);
         expect(resolved['primary-color-overlay'].$value).to.equal('rgba(255,252,0,0.5)');
     });
