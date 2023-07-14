@@ -26,5 +26,12 @@ describe('token-operations', function () {
         const resolved = tokenOperations(tokens);
         expect(resolved['primary-color-overlay'].$value).to.equal('rgba(255,252,0,0.5)');
     });
+
+    it('should resolve imported operations', function () {
+        const tokens = read('import.json');
+        expect(tokens['primary-color-overlay'].$value).to.equal('#fffc00');
+        const resolved = tokenOperations(tokens);
+        expect(resolved['primary-color-overlay'].$value).to.equal('rgba(255,252,0,0.5)');
+    });
 });
 

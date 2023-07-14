@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 const proxy = {
     Math: {
         ...Math,
@@ -14,10 +17,9 @@ const proxy = {
         }
     },
     Import: {
-        operations: async (path, ...args) => {
+        operations: (path, ...args) => {
             try {
-                const json = await import(path);
-                const operations = JSON.parse(json);
+                const operations = require(path);
                 if (!Array.isArray(operations)) throw new Error(`import is not Array: ${path}`);
                 return args.concat(operations);
             } catch (err) {
@@ -29,40 +31,28 @@ const proxy = {
 
 let processRegistry;
 
-function executeOperation(store, operation) {
+function executeOperation(operation, store) {
     if (!Array.isArray(operation)) {
+        // operation is a static value, return as-is
         return operation;
     }
     const [operationReference, ...args] = operation;
-    const inputs = args.map((arg) => arg in store ? store[arg] : arg);
-    let value = getOperation(operationReference)(...inputs);
+    const fn = getOperation(operationReference);
+    let result = fn(...args.map((arg) => arg in store ? store[arg] : arg));
 
-    if (operationReference === 'Import.operation') {
-        return execute(value, store.$value);
+    if (fn === proxy.Import.operations) {
+        // operation expects nested operation result to execute
+        return executeOperations(result, store.$value);
     }
-    return value;
+    return result;
 }
 
-function execute(operations, $value) {
+function executeOperations(operations, $value) {
     let idx;
     return operations.reduce((completed, operation, index) => {
         idx = `$${index}`;
-        return { ...completed, [idx]: executeOperation(completed, operation) }
+        return { ...completed, [idx]: executeOperation(operation, completed) }
     }, { $value })[idx];
-}
-
-function executeOperations(path, tokens) {
-    const { $operations, $value } = getPath(path, tokens);
-
-    // if operations have not been executed
-    if (!processRegistry.has(path)) {
-        processRegistry.set(path, true);
-        const value = execute($operations, getValue(path, tokens));
-        processRegistry.set(path, false);
-        return value;
-    }
-
-    return $value;
 }
 
 function getOperation(operationReference) {
@@ -73,23 +63,19 @@ function getOperation(operationReference) {
     return Function.prototype;
 }
 
-function getPath(path, tree) {
-    return path.split('.').reduce((obj, ref) => obj && obj[ref], tree);
-}
-
 function getValue(path, tokens) {
-    let { $value } = getPath(path, tokens);
+    let { $value } = resolvePath(path, tokens);
 
     const re = /\{([^)]+)\}/;
     if (re.test($value)) {
         const [, alias] = re.exec($value) || [];
         if (alias) {
             if (processRegistry.get(alias)) {
-                throw new Error(`Looping operational path at: ${path}. Terminating process.`);
+                throw new Error(`Looping operational path at: ${path}.`);
             }
-            const { $operations } = getPath(alias, tokens)
+            const { $operations } = resolvePath(alias, tokens)
             if ($operations) {
-                return executeOperations(alias, tokens);
+                return resolveOperations(alias, tokens);
             }
             return getValue(alias, tokens);
         }
@@ -98,16 +84,34 @@ function getValue(path, tokens) {
     return $value;
 }
 
+function resolveOperations(path, tokens) {
+    const { $operations, $value } = resolvePath(path, tokens);
+
+    // if operations have not been executed
+    if (!processRegistry.has(path)) {
+        processRegistry.set(path, true);
+        const value = executeOperations($operations, getValue(path, tokens));
+        processRegistry.set(path, false);
+        return value;
+    }
+
+    return $value;
+}
+
+function resolvePath(path, tree) {
+    return path.split('.').reduce((obj, ref) => obj && obj[ref], tree);
+}
+
 function traverse(path, tree) {
-    const target = path ? getPath(path, tree) : tree;
-    if (!target || typeof target !== 'object') return;
-    Object.entries(target).forEach(([name, token]) => {
-        const concat = [path, name].filter(Boolean).join('.');
+    const entry = path ? resolvePath(path, tree) : tree;
+    if (!entry || typeof entry !== 'object') return;
+    Object.entries(entry).forEach(([name, token]) => {
+        const target = [path, name].filter(Boolean).join('.');
         if (token.$value && token.$operations) {
-            token.$value = executeOperations(concat, tree);
+            token.$value = resolveOperations(target, tree);
             return;
         }
-        return traverse(concat, tree);
+        return traverse(target, tree);
     });
 }
 

@@ -1,0 +1,9 @@
+{
+  "primary-color-overlay": {
+    "$type": "color",
+    "$value": "#fffc00",
+    "$operations": [
+      ["Import.operations", "./operations/alpha.json", 0.5]
+    ]
+  }
+}
