@@ -3,10 +3,7 @@ import { proxy } from './proxy.js';
 let processRegistry;
 
 export function executeOperation(operation, context = {}) {
-    if (!Array.isArray(operation)) {
-        // operation is a static value, return as-is
-        return operation;
-    }
+    
     const [operationReference, ...args] = operation;
     const fn = getOperation(operationReference);
     const result = fn(...args.map((arg) => arg in context ? context[arg] : arg));
@@ -18,11 +15,14 @@ export function executeOperation(operation, context = {}) {
     return result;
 }
 
-function executeOperations(operations, $value) {
+function executeOperations(operations, $value, tokens = {}) {
     let idx;
     return operations.reduce((completed, operation, index) => {
         idx = `$${index}`;
-        return { ...completed, [idx]: executeOperation(operation, completed) }
+        const resolved = Array.isArray(operation)
+            ? executeOperation(operation, completed)
+            : resolveAlias(operation, tokens);
+        return { ...completed, [idx]: resolved }
     }, { $value })[idx];
 }
 
@@ -35,24 +35,24 @@ function getOperation(operationReference) {
 }
 
 function getValue(path, tokens) {
-    let { $value } = resolvePath(path, tokens);
+    const { $value } = resolvePath(path, tokens);
+    return resolveAlias($value, tokens);
+}
 
+function resolveAlias(value, tokens) {
     const re = /\{([^)]+)\}/;
-    if (re.test($value)) {
-        const [, alias] = re.exec($value) || [];
+    if (re.test(value)) {
+        const [, alias] = re.exec(value) || [];
         if (alias) {
             if (processRegistry.get(alias)) {
-                throw new Error(`Looping operational path at: ${path}.`);
+                throw new Error(`Looping operational path at: ${alias}.`);
             }
-            const { $operations } = resolvePath(alias, tokens)
-            if ($operations) {
-                return resolveOperations(alias, tokens);
-            }
-            return getValue(alias, tokens);
+            const { $operations } = resolvePath(alias, tokens) || {};
+            return $operations ? resolveOperations(alias, tokens) : getValue(alias, tokens);
         }
         console.warn(`Unresolved alias at: ${alias}`);
     }
-    return $value;
+    return value;
 }
 
 function resolveOperations(path, tokens) {
@@ -61,7 +61,7 @@ function resolveOperations(path, tokens) {
     // if operations have not been executed
     if (!processRegistry.has(path)) {
         processRegistry.set(path, true);
-        const value = executeOperations($operations, getValue(path, tokens));
+        const value = executeOperations($operations, getValue(path, tokens), tokens);
         processRegistry.set(path, false);
         return value;
     }

@@ -1,0 +1,19 @@
+{
+  "typography": {
+    "base-size": {
+      "$value": "1rem"
+    },
+    "scale": {
+      "$value": 1.25
+    }
+  },
+  "font-size-2": {
+    "$type": "dimension",
+    "$value": "{typography.base-size}",
+    "$operations": [
+      "{typography.scale}",
+      ["Math.pow", "$0", 2],
+      ["String.join", "", "calc(", "$value", " * ", "$1", ")"]
+    ]
+  }
+}

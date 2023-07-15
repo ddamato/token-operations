@@ -173,3 +173,28 @@ This custom group allows for file importing.
 ```
 
 After resolving, the value of `hypothetical-token` would be `9`.
+
+## Examples
+
+Create a typography scale using `Math.pow`.
+
+```json5
+{
+  "typography": {
+    "base-size": {
+      "$value": "1rem"
+    },
+    "scale": {
+      "$value": 1.25
+    }
+  },
+  "font-size-2": {
+    "$value": "{typography.base-size}", // Represents 1rem
+    "$operations": [
+      "{typography.scale}",
+      ["Math.pow", "$0", 2], // Math.pow(1.25, 2) = 1.5625
+      ["String.join", "", "calc(", "$value", " * ", "$1", ")"] // calc(1rem * 1.5625)
+    ]
+  }
+}
+```
