@@ -11,7 +11,7 @@ function createProxy(context, fallback) {
     })
 }
 
-export const proxy = {
+export const proxies = {
 
     Math: createProxy({
         add(...args) { 

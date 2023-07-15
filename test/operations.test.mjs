@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { executeOperation as execute } from '../src/index.js';
+import { executeOperation as execute } from '../src/core.js';
 
 describe('operations', function () {
 
