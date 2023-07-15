@@ -40,5 +40,12 @@ describe('token-operations', function () {
         const resolved = tokenOperations(tokens);
         expect(resolved['primary-color-overlay'].$value).to.equal('rgba(255,252,0,0.5)');
     });
+
+    it('should resolve alias within imported operations', function () {
+        const tokens = read('alias-and-import.json');
+        expect(tokens['font-size-2'].$value).to.equal('{typography.base-size}');
+        const resolved = tokenOperations(tokens);
+        expect(resolved['font-size-2'].$value).to.equal('calc(1rem * 1.5625)');
+    });
 });
 
