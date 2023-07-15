@@ -47,6 +47,8 @@ Within the `$operations` key is an ordered set of instructions to take to create
   }
 }
 ```
+After running `tokenOperations` on this data, the value of `primary-color-overlay` would now be `rgba(255,252,0,0.5)`.
+
 While this looks immediately overwhelming, **this project recommends that operations are sharable**. So to make the concept more approachable, the following is also possible with an identical result:
 
 ```json
