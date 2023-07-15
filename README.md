@@ -34,9 +34,9 @@ Within the `$operations` key is an ordered set of instructions to take to create
     "$value": "#fffc00",
     "$operations": [
       0.5,
-      ["String.match", "$value", "#([0-9A-Fa-f]{2})"],
-      ["String.match", "$value", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"],
-      ["String.match", "$value", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"],
+      ["String.capture", "$value", "#([0-9A-Fa-f]{2})"],
+      ["String.capture", "$value", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"],
+      ["String.capture", "$value", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"],
       ["Math.parseInt", "$1", 16],
       ["Math.parseInt", "$2", 16],
       ["Math.parseInt", "$3", 16],

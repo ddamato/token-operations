@@ -1,48 +1,54 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
+const cachedImports = new Map();
+
 const proxy = {
     Math: {
-        ...Math,
         parseInt: parseInt,
         add: (...args) => args.reduce((total, num) => total + Number(num), 0),
-        multiply: (...args) => args.reduce((total, num) => total * Number(num), 0)
+        multiply: (...args) => args.reduce((total, num) => total * Number(num), 1),
+        max: (...args) => Math.max(...args),
+        min: (...args) => Math.min(...args)
+
     },
     String: {
-        ...String,
         concat: (joiner, ...args) => args.join(joiner),
-        match: (str, rgx) => {
-            const result = str.match(rgx);
+        capture: (str, rgx, flag) => {
+            const result = str.match(new RegExp(rgx, flag));
             return result?.length ? result[1] : '';
         }
     },
     Import: {
         operations: (path, ...args) => {
-            try {
-                const operations = require(path);
-                if (!Array.isArray(operations)) throw new Error(`import is not Array: ${path}`);
-                return args.concat(operations);
-            } catch (err) {
-                throw new Error(err);
+            if (!cachedImports.has(path)) {
+                try {
+                    const operations = require(path);
+                    if (!Array.isArray(operations)) throw new Error(`import is not Array: ${path}`);
+                    cachedImports.set(path, operations);
+                } catch (err) {
+                    throw new Error(err);
+                }
             }
+            return args.concat(cachedImports.get(path));
         }
     }
 }
 
 let processRegistry;
 
-function executeOperation(operation, store) {
+export function executeOperation(operation, store = {}) {
     if (!Array.isArray(operation)) {
         // operation is a static value, return as-is
         return operation;
     }
     const [operationReference, ...args] = operation;
     const fn = getOperation(operationReference);
-    let result = fn(...args.map((arg) => arg in store ? store[arg] : arg));
+    const result = fn(...args.map((arg) => arg in store ? store[arg] : arg));
 
     if (fn === proxy.Import.operations) {
         // operation expects nested operation result to execute
-        return executeOperations(result, store.$value);
+        return executeOperations(result, store?.$value);
     }
     return result;
 }
