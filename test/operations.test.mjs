@@ -9,17 +9,19 @@ describe('operations', function () {
         expect(result).to.equal(5);
     });
 
+    describe('Number', function () {
+        it('should extend Number', function () {
+            const operation = ['Number.parseInt', 'FF', 16];
+            const result = execute(operation);
+            expect(result).to.equal(255);
+        });
+    });
+
     describe('Math', function () {
         it('should extend Math', function () {
             const operation = ['Math.max', 2, 12, 7];
             const result = execute(operation);
             expect(result).to.equal(12);
-        });
-
-        it('should Math.parseInt', function () {
-            const operation = ['Math.parseInt', 'FF', 16];
-            const result = execute(operation);
-            expect(result).to.equal(255);
         });
     
         it('should Math.add', function () {
@@ -52,6 +54,14 @@ describe('operations', function () {
             const operation = ['String.capture', 'hello', '(l)'];
             const result = execute(operation);
             expect(result).to.equal('l');
+        });
+    });
+
+    describe('Import', function () {
+        it('should Import.operations', function () {
+            const operation = ['Import.operations', './operations/hex-add-alpha-rgba.json', 0.2]
+            const result = execute(operation, { $value: "#ffcc00" });
+            expect(result).to.equal('rgba(255,204,0,0.2)');
         });
     });
 });

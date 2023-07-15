@@ -38,9 +38,9 @@ Within the `$operations` key is an ordered set of instructions to take to create
       ["String.capture", "$value", "#([0-9A-Fa-f]{2})"],
       ["String.capture", "$value", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"],
       ["String.capture", "$value", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"],
-      ["Math.parseInt", "$1", 16],
-      ["Math.parseInt", "$2", 16],
-      ["Math.parseInt", "$3", 16],
+      ["Number.parseInt", "$1", 16],
+      ["Number.parseInt", "$2", 16],
+      ["Number.parseInt", "$3", 16],
       ["String.join", ",", "$4", "$5", "$6", "$0"],
       ["String.join", "", "rgba(", "$7", ")"]
     ]
@@ -82,7 +82,6 @@ The following describes what operations are available to perform.
 ### `Math`
 
 All methods are extended from the global `Math` object with the following additions:
-- `Math.parseInt` - Extended from the global `parseInt`.
 - `Math.add` - Adds all arguments together.
 - `Math.multiply` - Multiplies all arguments together.
 
@@ -102,6 +101,25 @@ All methods are extended from the global `Math` object with the following additi
 ```
 After resolving, the value of `hypothetical-token` would be `4`.
 
+### `Number`
+
+All methods are extended from the global `Number` object
+
+```json5
+{
+  "hypothetical-token": {
+    "$value": "ff", // Represents $value
+    "$operations": [
+      [
+        "Number.parseInt", // Operation name
+        "$value", // First argument
+        16, // Second argument
+      ]
+    ]
+  }
+}
+```
+After resolving, the value of `hypothetical-token` would be `255`.
 ### `String`
 
 All methods are extended from the `String.prototype` object with the following additions:

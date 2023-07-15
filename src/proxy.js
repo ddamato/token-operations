@@ -14,7 +14,6 @@ function createProxy(context, fallback) {
 export const proxy = {
 
     Math: createProxy({
-        parseInt,
         add(...args) { 
             return args.reduce((total, num) => total + Number(num), 0)
         },
@@ -22,6 +21,10 @@ export const proxy = {
             return args.reduce((total, num) => total * Number(num), 1)
         }
     }, (prop) => Reflect.get(Math, prop)),
+
+    Number: createProxy({
+
+    }, (prop) => Reflect.get(Number, prop)),
 
     String: createProxy({
         join(joiner, ...args) {
