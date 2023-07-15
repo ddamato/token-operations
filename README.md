@@ -192,7 +192,7 @@ Create a typography scale using `Math.pow`.
     "$value": "{typography.base-size}", // Represents 1rem
     "$operations": [
       "{typography.scale}", // Resolve alias, set at $0
-      ["Math.pow", "$0", 2], // Math.pow(1.25, 2) = 1.5625
+      ["Math.pow", "$0", 2], // Math.pow(1.25, 2) = 1.5625, set at $1
       ["String.join", "", "calc(", "$value", " * ", "$1", ")"] // calc(1rem * 1.5625)
     ]
   }
