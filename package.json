@@ -1,17 +1,19 @@
 {
   "name": "token-operations",
   "version": "0.0.0",
-  "description": "",
+  "description": "Adds the ability to declare and run operations on design tokens",
   "main": "./dist/index.cjs",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./operations/*": "./operations/*"
   },
   "files": [
-    "dist"
+    "dist",
+    "operations"
   ],
   "scripts": {
     "build": "npm run clean && unbuild",
