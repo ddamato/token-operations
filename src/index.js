@@ -6,6 +6,8 @@ export function executeOperation(operation, context = {}) {
     
     const [operationReference, ...args] = operation;
     const fn = getOperation(operationReference);
+
+    if (typeof fn !== 'function') return operation;
     const result = fn(...args.map((arg) => arg in context ? context[arg] : arg));
 
     if (fn === proxy.Import.operations) {
@@ -28,10 +30,7 @@ function executeOperations(operations, $value, tokens = {}) {
 
 function getOperation(operationReference) {
     const [prototype, reference] = operationReference.split('.');
-    if (proxy[prototype]) {
-        return proxy[prototype][reference];
-    }
-    return Function.prototype;
+    return prototype && reference && proxy?.[prototype]?.[reference];
 }
 
 function getValue(path, tokens) {
