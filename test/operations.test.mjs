@@ -1,10 +1,21 @@
 import { expect } from 'chai';
-
 import { executeOperation as execute } from '../src/index.js';
 
 describe('operations', function () {
 
+    it('should pass context', function () {
+        const operation = ['Math.add', '$value', '$0'];
+        const result = execute(operation, { $value: 3, $0: 2 });
+        expect(result).to.equal(5);
+    });
+
     describe('Math', function () {
+        it('should extend Math', function () {
+            const operation = ['Math.max', 2, 12, 7];
+            const result = execute(operation);
+            expect(result).to.equal(12);
+        });
+
         it('should Math.parseInt', function () {
             const operation = ['Math.parseInt', 'FF', 16];
             const result = execute(operation);
@@ -22,23 +33,17 @@ describe('operations', function () {
             const result = execute(operation);
             expect(result).to.equal(-48);
         });
-
-        it('should Math.max', function () {
-            const operation = ['Math.max', 2, 12, 7];
-            const result = execute(operation);
-            expect(result).to.equal(12);
-        });
-
-        it('should Math.min', function () {
-            const operation = ['Math.min', 2, 12, 7];
-            const result = execute(operation);
-            expect(result).to.equal(2);
-        });
     });
 
     describe('String', function () {
-        it('should String.concat', function () {
-            const operation = ['String.concat', '|', 'h', 'e', 'l', 'l', 'o'];
+        it('should extend String', function () {
+            const operation = ['String.trim', ' hello world '];
+            const result = execute(operation);
+            expect(result).to.equal('hello world');
+        });
+
+        it('should String.join', function () {
+            const operation = ['String.join', '|', 'h', 'e', 'l', 'l', 'o'];
             const result = execute(operation);
             expect(result).to.equal('h|e|l|l|o');
         });

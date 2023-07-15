@@ -1,54 +1,19 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
-const cachedImports = new Map();
-
-const proxy = {
-    Math: {
-        parseInt: parseInt,
-        add: (...args) => args.reduce((total, num) => total + Number(num), 0),
-        multiply: (...args) => args.reduce((total, num) => total * Number(num), 1),
-        max: (...args) => Math.max(...args),
-        min: (...args) => Math.min(...args)
-
-    },
-    String: {
-        concat: (joiner, ...args) => args.join(joiner),
-        capture: (str, rgx, flag) => {
-            const result = str.match(new RegExp(rgx, flag));
-            return result?.length ? result[1] : '';
-        }
-    },
-    Import: {
-        operations: (path, ...args) => {
-            if (!cachedImports.has(path)) {
-                try {
-                    const operations = require(path);
-                    if (!Array.isArray(operations)) throw new Error(`import is not Array: ${path}`);
-                    cachedImports.set(path, operations);
-                } catch (err) {
-                    throw new Error(err);
-                }
-            }
-            return args.concat(cachedImports.get(path));
-        }
-    }
-}
+import { proxy } from './proxy.js';
 
 let processRegistry;
 
-export function executeOperation(operation, store = {}) {
+export function executeOperation(operation, context = {}) {
     if (!Array.isArray(operation)) {
         // operation is a static value, return as-is
         return operation;
     }
     const [operationReference, ...args] = operation;
     const fn = getOperation(operationReference);
-    const result = fn(...args.map((arg) => arg in store ? store[arg] : arg));
+    const result = fn(...args.map((arg) => arg in context ? context[arg] : arg));
 
     if (fn === proxy.Import.operations) {
         // operation expects nested operation result to execute
-        return executeOperations(result, store?.$value);
+        return executeOperations(result, context?.$value);
     }
     return result;
 }
@@ -63,7 +28,7 @@ function executeOperations(operations, $value) {
 
 function getOperation(operationReference) {
     const [prototype, reference] = operationReference.split('.');
-    if (proxy[prototype] && reference in proxy[prototype]) {
+    if (proxy[prototype]) {
         return proxy[prototype][reference];
     }
     return Function.prototype;

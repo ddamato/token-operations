@@ -40,8 +40,8 @@ Within the `$operations` key is an ordered set of instructions to take to create
       ["Math.parseInt", "$1", 16],
       ["Math.parseInt", "$2", 16],
       ["Math.parseInt", "$3", 16],
-      ["String.concat", ",", "$4", "$5", "$6", "$0"],
-      ["String.concat", "", "rgba(", "$7", ")"]
+      ["String.join", ",", "$4", "$5", "$6", "$0"],
+      ["String.join", "", "rgba(", "$7", ")"]
     ]
   }
 }
