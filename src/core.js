@@ -116,7 +116,7 @@ function resolveOperations(path, tokens) {
     const { $operations, $value } = resolvePath(path, tokens);
 
     // if operations have not been executed
-    if (!processRegistry.has(path)) {
+    if ($operations && !processRegistry.has(path)) {
         processRegistry.set(path, true);
         const value = executeOperations($operations, getValue(path, tokens), tokens);
         processRegistry.set(path, false);
@@ -149,7 +149,7 @@ function traverse(path, tree) {
     if (!entry || typeof entry !== 'object') return;
     Object.entries(entry).forEach(([name, token]) => {
         const target = [path, name].filter(Boolean).join('.');
-        if (token.$value && token.$operations) {
+        if (token.$value && typeof token.$value !== 'object') {
             token.$value = resolveOperations(target, tree);
             return;
         }
