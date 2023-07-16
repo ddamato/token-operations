@@ -17,13 +17,19 @@
     "lib"
   ],
   "unbuild": {
-    "failOnWarn": false
+    "entries": [
+      "src/index"
+    ],
+    "clean": true,
+    "rollup": {
+        "emitCJS": true
+    }
   },
   "scripts": {
     "build": "npm run clean && unbuild",
     "clean": "rm -rf ./dist",
     "test": "mocha",
-    "prepublishOnly": "npm test",
+    "prepublishOnly": "npm test && npm run build",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "keywords": [],
