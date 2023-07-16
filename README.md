@@ -57,7 +57,7 @@ While this looks immediately overwhelming, **this project recommends that operat
     "$type": "color",
     "$value": "#fffc00",
     "$operations": [
-      ["Import.operations", "token-operations/hex-add-alpha-rgba", 0.5]
+      ["Import.operations", "token-operations/operations/hex-add-alpha-rgba", 0.5]
     ]
   }
 }

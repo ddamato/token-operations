@@ -46,7 +46,7 @@ function getValue(path, tokens) {
 }
 
 function resolveAlias(value, tokens) {
-    const re = /\{([^)]+)\}/;
+    const re = /\{([^}]+)\}/;
     if (re.test(value)) {
         const [, alias] = re.exec(value) || [];
         if (alias) {
@@ -56,7 +56,7 @@ function resolveAlias(value, tokens) {
             const { $operations } = resolvePath(alias, tokens) || {};
             return $operations ? resolveOperations(alias, tokens) : getValue(alias, tokens);
         }
-        console.warn(`Unresolved alias at: ${alias}`);
+        console.warn(`Unresolved alias at: ${value}`);
     }
     return value;
 }
