@@ -113,17 +113,18 @@ function resolveAlias(value, tokens) {
  * @returns {String|Number} - The final value after operations are completed, to be assigned at $value.
  */
 function resolveOperations(path, tokens) {
-    const { $operations, $value } = resolvePath(path, tokens);
+    const { $operations } = resolvePath(path, tokens);
+
+    let value = getValue(path, tokens);
 
     // if operations have not been executed
     if ($operations && !processRegistry.has(path)) {
         processRegistry.set(path, true);
-        const value = executeOperations($operations, getValue(path, tokens), tokens);
+        value = executeOperations($operations, value, tokens);
         processRegistry.set(path, false);
-        return value;
     }
 
-    return $value;
+    return value;
 }
 
 /**
