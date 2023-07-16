@@ -49,7 +49,7 @@ describe('token-operations', function () {
     });
 
     it('should allow multiple imported operations', function () {
-        const tokens = read('color-contrast.json');
+        const tokens = read('multi-import.json');
         expect(tokens['on-primary-color'].$value).to.equal('{color.light}');
         const resolved = tokenOperations(tokens);
         expect(resolved['on-primary-color'].$value).to.equal('black');

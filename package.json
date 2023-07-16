@@ -22,7 +22,7 @@
     ],
     "clean": true,
     "rollup": {
-        "emitCJS": true
+      "emitCJS": true
     }
   },
   "scripts": {
@@ -48,5 +48,8 @@
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "unbuild": "^1.2.1"
+  },
+  "dependencies": {
+    "json5": "^2.2.3"
   }
 }
