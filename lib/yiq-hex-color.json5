@@ -1,13 +1,15 @@
+// https://www.w3.org/TR/AERT/#color-contrast
 [
-    ["String.capture", "$0", "#([0-9A-Fa-f]{2})"],
-    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"],
-    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"],
-    ["Number.parseInt", "$1", 16],
-    ["Number.parseInt", "$2", 16],
-    ["Number.parseInt", "$3", 16],
-    ["Math.multiply", "$4", 299],
-    ["Math.multiply", "$5", 587],
-    ["Math.multiply", "$6", 114],
-    ["Math.add", "$7", "$8", "$9"],
-    ["Math.multiply", "$10", 0.001]
+    // @param {String} $0 - Hexcode with # symbol
+    ["String.capture", "$0", "#([0-9A-Fa-f]{2})"], // Capture first two characters
+    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"], // Capture second 2 characters
+    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"], // Capture third 2 characters
+    ["Number.parseInt", "$1", 16], // Transform red channel hexadecimal to decimal
+    ["Number.parseInt", "$2", 16], // Transform green channel hexadecimal to decimal
+    ["Number.parseInt", "$3", 16], // Transform blue channel hexadecimal to decimal
+    ["Math.multiply", "$4", 299], // Multiplier for red decimal
+    ["Math.multiply", "$5", 587], // Multiplier for green decimal
+    ["Math.multiply", "$6", 114], // Multiplier for blue decimal
+    ["Math.add", "$7", "$8", "$9"], // Add resulting values together
+    ["Math.multiply", "$10", 0.001] // Divide by 1000
 ]

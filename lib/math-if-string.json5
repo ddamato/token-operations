@@ -1,7 +1,10 @@
 [
-    ["Math.add", "$0", -1],
-    ["Math.abs", "$3"],
-    ["String.repeat", "$1", "$0"],
-    ["String.repeat", "$2", "$4"],
-    ["String.concat", "$5", "$6"]
+    // @param {Number} $0 - Boolean; 0 if false, 1 if true
+    // @param {String} $1 - String value if true
+    // @param {String} $2 - String value if false
+    ["Math.add", "$0", -1], // 0 - 1 = -1; 1 - 1 = 0 
+    ["Math.abs", "$3"], // Creates an inverse of the $0 input (!input)
+    ["String.repeat", "$1", "$0"], // String.repeat(input), if 0 returns ''
+    ["String.repeat", "$2", "$4"], // String.repeat(!input), if 0 returns ''
+    ["String.concat", "$5", "$6"] // Concat repeat results together for final value
 ]

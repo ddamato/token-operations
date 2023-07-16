@@ -1,10 +1,11 @@
 [
-    ["String.capture", "$value", "#([0-9A-Fa-f]{2})"],
-    ["String.capture", "$value", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"],
-    ["String.capture", "$value", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"],
-    ["Number.parseInt", "$1", 16],
-    ["Number.parseInt", "$2", 16],
-    ["Number.parseInt", "$3", 16],
-    ["String.infix", ",", "$4", "$5", "$6", "$0"],
-    ["String.infix", "", "rgba(", "$7", ")"]
+    // @param {Number} $0 - Alpha amount
+    ["String.capture", "$value", "#([0-9A-Fa-f]{2})"], // Capture first two characters
+    ["String.capture", "$value", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"], // Capture second 2 characters
+    ["String.capture", "$value", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"], // Capture third 2 characters
+    ["Number.parseInt", "$1", 16], // Transform red channel hexadecimal to decimal
+    ["Number.parseInt", "$2", 16], // Transform green channel hexadecimal to decimal
+    ["Number.parseInt", "$3", 16], // Transform blue channel hexadecimal to decimal
+    ["String.infix", ",", "$4", "$5", "$6", "$0"], // Comma separate values
+    ["String.infix", "", "rgba(", "$7", ")"] // Returns 'rgba(hex-as-rgb, $0)'
 ]

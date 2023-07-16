@@ -1,4 +1,6 @@
 [
-    ["Math.pow", "$0", "$1"],
-    ["String.infix", "", "calc(", "$value", " * ", "$2", ")"]
+    // @param {Number} $0 - Typography scale
+    // @param {Number} $1 - Current step
+    ["Math.pow", "$0", "$1"], // Exponential growth
+    ["String.infix", "", "calc(", "$value", " * ", "$2", ")"] // Returns 'calc(exponent * $value)'
 ]
