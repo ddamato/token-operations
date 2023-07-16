@@ -59,7 +59,7 @@ describe('operations', function () {
 
     describe('Import', function () {
         it('should Import.operations', function () {
-            const operation = ['Import.operations', './operations/hex-add-alpha-rgba.json', 0.2]
+            const operation = ['Import.operations', '../lib/hex-add-alpha-rgba.json', 0.2]
             const result = execute(operation, { $value: "#ffcc00" });
             expect(result).to.equal('rgba(255,204,0,0.2)');
         });

@@ -10,12 +10,15 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./operations/*": "./operations/*"
+    "./lib/*": "./lib/*"
   },
   "files": [
     "dist",
-    "operations"
+    "lib"
   ],
+  "unbuild": {
+    "failOnWarn": false
+  },
   "scripts": {
     "build": "npm run clean && unbuild",
     "clean": "rm -rf ./dist",

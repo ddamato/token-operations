@@ -12,7 +12,7 @@
     "$value": "{typography.base-size}",
     "$operations": [
       "{typography.scale}",
-      ["Import.operations", "./operations/typography-scale", "$0", 2]
+      ["Import.operations", "../lib/typography-scale", "$0", 2]
     ]
   }
 }
