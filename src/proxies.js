@@ -3,7 +3,14 @@ const require = createRequire(import.meta.url);
 
 const cachedImports = new Map();
 
-function createProxy(context, fallback) {
+/**
+ * Creates a proxy for a category of operations so custom functions can be added.
+ * 
+ * @param {Object} context - Collection of custom functions to support common patterns.
+ * @param {Function} fallback - The handler to catch extended usage or noop.
+ * @returns {Proxy} - A proxy to catch the prop getter and route function.
+ */
+function createProxy(context = {}, fallback = Function.prototype) {
     return new Proxy(context, {
         get(target, prop) {
             return Reflect.get(target, prop) || fallback(prop);
@@ -27,8 +34,8 @@ export const proxies = {
     }, (prop) => Reflect.get(Number, prop)),
 
     String: createProxy({
-        join(joiner, ...args) {
-            return args.join(joiner)
+        infix(str, ...args) {
+            return args.join(str)
         },
         capture(str, rgx, flag) {
             const result = str.match(new RegExp(rgx, flag));

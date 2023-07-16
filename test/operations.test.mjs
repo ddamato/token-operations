@@ -44,8 +44,8 @@ describe('operations', function () {
             expect(result).to.equal('hello world');
         });
 
-        it('should String.join', function () {
-            const operation = ['String.join', '|', 'h', 'e', 'l', 'l', 'o'];
+        it('should String.infix', function () {
+            const operation = ['String.infix', '|', 'h', 'e', 'l', 'l', 'o'];
             const result = execute(operation);
             expect(result).to.equal('h|e|l|l|o');
         });

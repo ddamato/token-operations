@@ -47,5 +47,12 @@ describe('token-operations', function () {
         const resolved = tokenOperations(tokens);
         expect(resolved['font-size-2'].$value).to.equal('calc(1rem * 1.5625)');
     });
+
+    it('should allow multiple imported operations', function () {
+        const tokens = read('color-contrast.json');
+        expect(tokens['on-primary-color'].$value).to.equal('{color.light}');
+        const resolved = tokenOperations(tokens);
+        expect(resolved['on-primary-color'].$value).to.equal('black');
+    });
 });
 

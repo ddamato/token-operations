@@ -1,0 +1,7 @@
+[
+    ["Math.add", "$0", -1],
+    ["Math.abs", "$3"],
+    ["String.repeat", "$1", "$0"],
+    ["String.repeat", "$2", "$4"],
+    ["String.concat", "$5", "$6"]
+]

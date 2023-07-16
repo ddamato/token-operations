@@ -1,0 +1,26 @@
+{
+    "color": {
+        "primary": {
+            "$value": "#ffcc00"
+        },
+        "light": {
+            "$value": "white"
+        },
+        "dark": {
+            "$value": "black"
+        }
+    },
+    "on-primary-color": {
+        "$type": "color",
+        "$value": "{color.light}",
+        "$operations": [
+            "{color.primary}",
+            "{color.dark}",
+            ["Import.operations", "../lib/yiq-hex-color", "$0"],
+            ["Math.pow", "$2", -1],
+            ["Math.multiply", 128, "$3"],
+            ["Math.floor", "$4"],
+            ["Import.operations", "../lib/math-if-string", "$5", "$value", "$1"]
+        ]
+    }
+}

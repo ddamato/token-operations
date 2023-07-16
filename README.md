@@ -41,8 +41,8 @@ Within the `$operations` key is an ordered set of instructions to take to create
       ["Number.parseInt", "$1", 16],
       ["Number.parseInt", "$2", 16],
       ["Number.parseInt", "$3", 16],
-      ["String.join", ",", "$4", "$5", "$6", "$0"],
-      ["String.join", "", "rgba(", "$7", ")"]
+      ["String.infix", ",", "$4", "$5", "$6", "$0"],
+      ["String.infix", "", "rgba(", "$7", ")"]
     ]
   }
 }
@@ -125,7 +125,7 @@ After resolving, the value of `hypothetical-token` would be `255`.
 ### `String`
 
 All methods are extended from the `String.prototype` object with the following additions:
-- `String.join` - First argument defines the joiner, the rest of the arguments are joined between the joiner.
+- `String.infix` - First argument defines the joiner, the rest of the arguments are joined between the joiner.
 - `String.capture` - First argument is the string, second is a Regular Expression with a capture group, third argument is a Regular Expression flag. Returns the first capture if found; empty string if not found.
 
 ```json5
@@ -195,7 +195,7 @@ Create a typography scale using `Math.pow`.
     "$operations": [
       "{typography.scale}", // Resolve alias, set at $0
       ["Math.pow", "$0", 2], // Math.pow(1.25, 2) = 1.5625, set at $1
-      ["String.join", "", "calc(", "$value", " * ", "$1", ")"] // calc(1rem * 1.5625)
+      ["String.infix", "", "calc(", "$value", " * ", "$1", ")"] // calc(1rem * 1.5625)
     ]
   }
 }

@@ -1,4 +1,4 @@
 [
     ["Math.pow", "$0", "$1"],
-    ["String.join", "", "calc(", "$value", " * ", "$2", ")"]
+    ["String.infix", "", "calc(", "$value", " * ", "$2", ")"]
 ]

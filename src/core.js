@@ -2,6 +2,12 @@ import { proxies } from './proxies.js';
 
 let processRegistry;
 
+/**
+ * Processes a collection of tokens to complete found operations.
+ * 
+ * @param {Object} tokens - A collection of tokens.
+ * @returns {Object} - The updated collection with operations completed.
+ */
 export function processOperations(tokens) {
     const clone = structuredClone(tokens);
     processRegistry = new Map();
@@ -9,6 +15,15 @@ export function processOperations(tokens) {
     return clone;
 }
 
+/**
+ * Executes a single operation.
+ * 
+ * @param {Array<String|Number>} operation - An operation entry.
+ * @param {Object} context - Completed operations stored at $index.
+ * @returns {String|Number} - The result of the completed operation.
+ * 
+ * @example (['Number.parseInt', 'ff', '$0'], { $0: 16 }) -> 255
+ */
 export function executeOperation(operation, context = {}) {
     
     const [operationReference, ...args] = operation;
@@ -24,6 +39,15 @@ export function executeOperation(operation, context = {}) {
     return result;
 }
 
+
+/**
+ * Executes the set of operations for a token.
+ * 
+ * @param {Array} operations - A set of operation entries.
+ * @param {String|Number} $value - The value of the current token.
+ * @param {Object} tokens - The collection of all tokens within the file; used to resolve aliases.
+ * @returns {String|Number} - The result of completed operations.
+ */
 function executeOperations(operations, $value, tokens = {}) {
     let idx;
     return operations.reduce((completed, operation, index) => {
@@ -35,16 +59,36 @@ function executeOperations(operations, $value, tokens = {}) {
     }, { $value })[idx];
 }
 
+/**
+ * Determines which function to call for an operation.
+ * 
+ * @param {String} operationReference - A reference to an function to complete an operation.
+ * @returns {Function} - The function to call.
+ */
 function getOperation(operationReference) {
     const [prototype, reference] = operationReference.split('.');
     return prototype && reference && proxies?.[prototype]?.[reference];
 }
 
+/**
+ * Gets the resolved value of a token; commonly found at $value.
+ * 
+ * @param {String} path - A dot-notation path to a token.
+ * @param {Object} tokens - Collection of all tokens to resolve aliases or operations.
+ * @returns {String|Number} - A resolved value.
+ */
 function getValue(path, tokens) {
     const { $value } = resolvePath(path, tokens);
     return resolveAlias($value, tokens);
 }
 
+/**
+ * Gets the resolved value from a given value, which might be an alias.
+ * 
+ * @param {String|Number} value - The $value of a token, which might be an alias.
+ * @param {Object} tokens - Collection of all tokens to resolve aliases or operations.
+ * @returns {String|Number} - A resolved value. 
+ */
 function resolveAlias(value, tokens) {
     const re = /\{([^}]+)\}/;
     if (re.test(value)) {
@@ -61,6 +105,13 @@ function resolveAlias(value, tokens) {
     return value;
 }
 
+/**
+ * Completes the operations at a given token, which may include resolving dependent aliases or operations.
+ * 
+ * @param {String} path - A dot-notation path to a token including $operations 
+ * @param {Object} tokens - Collection of all tokens to resolve aliases or operations.
+ * @returns {String|Number} - The final value after operations are completed, to be assigned at $value.
+ */
 function resolveOperations(path, tokens) {
     const { $operations, $value } = resolvePath(path, tokens);
 
@@ -75,10 +126,24 @@ function resolveOperations(path, tokens) {
     return $value;
 }
 
+/**
+ * Returns the value inside the object at the given path.
+ * 
+ * @param {String} - A dot-notation path.
+ * @param {Object} - A collection to traverse.
+ * @returns {*} - The value found at the end of the given path.
+ */
 function resolvePath(path, tree) {
     return path.split('.').reduce((obj, ref) => obj && obj[ref], tree);
 }
 
+/**
+ * Walks the collection of tokens, looking for $operations to resolve.
+ * 
+ * @param {String} path - A dot-notation path.
+ * @param {Object} tree - A collection to traverse.
+ * @returns {Undefined}
+ */
 function traverse(path, tree) {
     const entry = path ? resolvePath(path, tree) : tree;
     if (!entry || typeof entry !== 'object') return;

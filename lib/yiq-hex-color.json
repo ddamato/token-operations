@@ -1,0 +1,13 @@
+[
+    ["String.capture", "$0", "#([0-9A-Fa-f]{2})"],
+    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"],
+    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"],
+    ["Number.parseInt", "$1", 16],
+    ["Number.parseInt", "$2", 16],
+    ["Number.parseInt", "$3", 16],
+    ["Math.multiply", "$4", 299],
+    ["Math.multiply", "$5", 587],
+    ["Math.multiply", "$6", 114],
+    ["Math.add", "$7", "$8", "$9"],
+    ["Math.multiply", "$10", 0.001]
+]
