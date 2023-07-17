@@ -1,4 +1,4 @@
-import { proxies } from './proxies.js';
+import { commands } from './commands.js';
 
 let processRegistry;
 
@@ -26,13 +26,13 @@ export function processOperations(tokens) {
  */
 export function executeOperation(operation, context = {}) {
     
-    const [operationReference, ...args] = operation;
-    const fn = getOperation(operationReference);
+    const [commandReference, ...args] = operation;
+    const fn = getCommand(commandReference);
 
     if (typeof fn !== 'function') return operation;
     const result = fn(...args.map((arg) => arg in context ? context[arg] : arg));
 
-    if (fn === proxies.Import.operations) {
+    if (fn === commands.Import.operations) {
         // operation expects nested operation result to execute
         return executeOperations(result, context?.$value);
     }
@@ -61,12 +61,12 @@ function executeOperations(operations, $value, tokens = {}) {
 /**
  * Determines which function to call for an operation.
  * 
- * @param {String} operationReference - A reference to an function to complete an operation.
+ * @param {String} commandReference - A reference to an function to complete an operation.
  * @returns {Function} - The function to call.
  */
-function getOperation(operationReference) {
-    const [prototype, reference] = operationReference.split('.');
-    return prototype && reference && proxies?.[prototype]?.[reference];
+function getCommand(commandReference) {
+    const [prototype, reference] = commandReference.split('.');
+    return prototype && reference && commands?.[prototype]?.[reference];
 }
 
 /**

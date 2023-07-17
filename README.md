@@ -10,7 +10,7 @@ import tokenOperations from 'token-operations';
 
 export default tokenOperations(tokens);
 ```
-This assumes that the `.json` file has token operations as described below.
+This assumes that the `.json` file has token operations as described below. The system will also accept `.json5` files with supports comments among other features.
 
 ## Syntax
 
@@ -73,17 +73,8 @@ While this may look immediately overwhelming, **this project recommends that ope
 This introduces the concept of [imported operations](#imported-operations); reusable sets of lower level operations which can be used multiple times.
 
 ## Anatomy
-### Operation Array
 
-The `$operations` key expects an array of data. This data could be a value, a token alias, or an "operation" array. The following describes the anatomy of an operation array.
-
-```json5
-["operation reference", "arg1", "arg2", "arg3", ...]
-```
-
-You can think of an operation array like a function, where the first item in the array is the function name, and all other items given are arguments for the function.
-
-The placement of the operation array matters in the larger set of operations as the result is stored at the local index where the operation was set. References to the results of previous operations are available to later operations.
+The `$operations` key expects an array of data. This data could be a value, a token alias, or an "operation" array. 
 
 ```json5
 [
@@ -92,7 +83,29 @@ The placement of the operation array matters in the larger set of operations as 
   ["Math.add", "$0", "$1"] // Operation resulting in 49, Stored at $2 
 ]
 ```
-Notice how the final operation uses the `$0` and `$1` data stored earlier in the function. Each operation stores the resulting value at the local index of the set.
+
+The placement matters in the larger set of operations as the result is stored at the local index where the operation was set. For example, the result of the first item in the set is stored at `$0`. References to the results of previous operations are then available to later operations.
+
+Altogether, you can think of the above `$operations` as the following:
+
+```js
+const $0 = 42;
+const $1 = lookup('numbers.seven');
+const $2, $value = add($0, $1);
+```
+
+The final operation sets the new `$value` for the token.
+### Operation Array
+
+The following describes the anatomy of an operation array.
+
+```json5
+["command", "arg1", "arg2", "arg3", ...]
+```
+
+You can think of an operation array like a function, where the first item in the array is the function name, and all other items given are arguments for the function.
+
+> TODO: include commands
 
 ### Aliases
 
@@ -113,7 +126,7 @@ When referencing token aliases, the operations will attempt to resolve the alias
 }
 ```
 
-A limitation of the system is that **aliases cannot be used directly in operations**. They must be stored at a resulting local index first before they can be used.
+A limitation of the system is that **aliases cannot be used directly in operations**. They must be stored at a local index first before they can be used.
 
 ```json5
 // NOT VALID!
@@ -153,6 +166,23 @@ The final operation will set its result as the new `$value` in the token.
 The `Import.operations` command can inject a set of operations into a parent set, where the result is stored at the local index.
 
 ```json5
+// token-operations/lib/hex-value-alpha-rgba.json5
+[
+    // @param {String} $0 - Hex value including #
+    // @param {Number} $1 - Alpha amount
+    ["String.capture", "$0", "#([0-9A-Fa-f]{2})"], // Capture first two characters
+    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"], // Capture second 2 characters
+    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"], // Capture third 2 characters
+    ["Number.parseInt", "$2", 16], // Transform red channel hexadecimal to decimal
+    ["Number.parseInt", "$3", 16], // Transform green channel hexadecimal to decimal
+    ["Number.parseInt", "$4", 16], // Transform blue channel hexadecimal to decimal
+    ["String.infix", ",", "$5", "$6", "$7", "$1"], // Comma separate values
+    ["String.infix", "", "rgba(", "$8", ")"] // Returns 'rgba(hex-as-rgb, $0)'
+]
+```
+
+```json5
+// tokens.json
 {
   "primary-color-overlay": {
     "$type": "color",
@@ -163,7 +193,38 @@ The `Import.operations` command can inject a set of operations into a parent set
   }
 }
 ```
-A limitation of imported operations is that they do not have access to the `$value`. It must be passed in as a positional argument.
+The result of `hex-value-alpha-rgba` would be stored at `$0` but also applied as the new token value because it is the final operation in the root operation set.
+
+The signature of `Import.operations` is the following:
+
+```json5
+["Import.operations", "path/to/operation", "arg-index0", "arg-index1", "arg-index2", ...]
+```
+
+`arg-indexN` means this value will be set at the local position within the operation as `$N`. This allows values to be passed into imported operations as positional arguments. Then within the `path/to/operation`:
+
+```json5
+[
+  // arg-index0
+  // arg-index1,
+  // arg-index2,
+  ["Math.add", "$0", "$1", "$2"]
+]
+```
+It is helpful to leave a comment where the positional arguments will be to act as placeholders for future operational reference.
+
+A limitation of imported operations is that they do not have access to the `$value` in storage. It must be passed in as a positional argument.
+
+```json5
+// token-operations/lib/hex-value-alpha-rgba.json5
+
+// NOT VALID!
+// Cannot use $value within the imported operation
+[
+    ["String.capture", "$value", "#([0-9A-Fa-f]{2})"],
+    ...
+]
+```
 
 You can have several imported operations within an operation set. Here is an example which determines the best foreground color to use, given a background hex color using the convenience imports:
 

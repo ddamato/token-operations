@@ -8,19 +8,19 @@ const cachedImports = new Map();
 /**
  * Creates a proxy for a category of operations so custom functions can be added.
  * 
- * @param {Object} context - Collection of custom functions to support common patterns.
+ * @param {Object} handlers - Collection of custom functions to support common patterns.
  * @param {Function} fallback - The handler to catch extended usage or noop.
  * @returns {Proxy} - A proxy to catch the prop getter and route function.
  */
-function createProxy(context = {}, fallback = Function.prototype) {
-    return new Proxy(context, {
+function createProxy(handlers = {}, fallback = Function.prototype) {
+    return new Proxy(handlers, {
         get(target, prop) {
             return Reflect.get(target, prop) || fallback(prop);
         }
     })
 }
 
-export const proxies = {
+export const commands = {
 
     Math: createProxy({
         add(...args) { 
