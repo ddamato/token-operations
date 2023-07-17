@@ -13,7 +13,7 @@
     "$operations": [
       "{typography.scale}",
       ["Math.pow", "$0", 2],
-      ["String.infix", "", "calc(", "$value", " * ", "$1", ")"]
+      ["String.infix", "", "calc(", "$1", " * ", "$value", ")"]
     ]
   }
 }

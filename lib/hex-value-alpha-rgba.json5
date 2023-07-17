@@ -1,0 +1,12 @@
+[
+    // @param {String} $0 - Hex value including #
+    // @param {Number} $1 - Alpha amount
+    ["String.capture", "$0", "#([0-9A-Fa-f]{2})"], // Capture first two characters
+    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"], // Capture second 2 characters
+    ["String.capture", "$0", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"], // Capture third 2 characters
+    ["Number.parseInt", "$2", 16], // Transform red channel hexadecimal to decimal
+    ["Number.parseInt", "$3", 16], // Transform green channel hexadecimal to decimal
+    ["Number.parseInt", "$4", 16], // Transform blue channel hexadecimal to decimal
+    ["String.infix", ",", "$5", "$6", "$7", "$1"], // Comma separate values
+    ["String.infix", "", "rgba(", "$8", ")"] // Returns 'rgba(hex-as-rgb, $0)'
+]

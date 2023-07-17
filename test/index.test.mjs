@@ -38,7 +38,7 @@ describe('token-operations', function () {
         const tokens = read('alias-in-operation.json');
         expect(tokens['font-size-2'].$value).to.equal('{typography.base-size}');
         const resolved = tokenOperations(tokens);
-        expect(resolved['font-size-2'].$value).to.equal('calc(1rem * 1.5625)');
+        expect(resolved['font-size-2'].$value).to.equal('calc(1.5625 * 1rem)');
     });
 
     it('should resolve imported operations', function () {
@@ -52,7 +52,7 @@ describe('token-operations', function () {
         const tokens = read('alias-and-import.json');
         expect(tokens['font-size-2'].$value).to.equal('{typography.base-size}');
         const resolved = tokenOperations(tokens);
-        expect(resolved['font-size-2'].$value).to.equal('calc(1rem * 1.5625)');
+        expect(resolved['font-size-2'].$value).to.equal('calc(1.5625 * 1rem)');
     });
 
     it('should allow multiple imported operations', function () {

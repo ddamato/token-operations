@@ -9,8 +9,8 @@ let processRegistry;
  * @returns {Object} - The updated collection with operations completed.
  */
 export function processOperations(tokens) {
-    const clone = structuredClone(tokens);
     processRegistry = new Map();
+    const clone = structuredClone(tokens);
     traverse(null, clone);
     return clone;
 }
@@ -38,7 +38,6 @@ export function executeOperation(operation, context = {}) {
     }
     return result;
 }
-
 
 /**
  * Executes the set of operations for a token.
