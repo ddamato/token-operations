@@ -250,7 +250,7 @@ You can have several imported operations within an operation set. Here is an exa
             "{color.dark}",
 
             // Import the YIQ color operation set, and find YIQ value for {color.primary}
-            ["Import.operations", "token-operations/lib/hex-value-yiq-color", "$0"],
+            ["Import.operations", "token-operations/lib/hex-value-yiq-brightness", "$0"],
 
             // Compare the resulting value against 128
             ["Math.pow", "$2", -1], // 1 / YIQ
@@ -264,4 +264,4 @@ You can have several imported operations within an operation set. Here is an exa
 }
 ```
 
-This is possible because the nested operation has its own set of local indexes. In other words, in the root operation set, `$1` is the resolved value of `{color.dark}`. Inside the `hex-value-yiq-color` nested operation, `$1` is the result of whatever the second operation is within `hex-value-yiq-color`. The local indexes are not available between operation sets; positional arguments must be passed to share values. The result of a nested operation is set at the parent's local index where it was positioned. In the above example, the result of `hex-value-yiq-color` is set at `$2` in the root operation set and used in the following operation.
+This is possible because the nested operation has its own set of local indexes. In other words, in the root operation set, `$1` is the resolved value of `{color.dark}`. Inside the `hex-value-yiq-brightness` nested operation, `$1` is the result of whatever the second operation is within `hex-value-yiq-brightness`. The local indexes are not available between operation sets; positional arguments must be passed to share values. The result of a nested operation is set at the parent's local index where it was positioned. In the above example, the result of `hex-value-yiq-brightness` is set at `$2` in the root operation set and used in the following operation.

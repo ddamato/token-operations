@@ -16,7 +16,7 @@
         "$operations": [
             "{color.primary}",
             "{color.dark}",
-            ["Import.operations", "../lib/hex-value-yiq-color", "$0"],
+            ["Import.operations", "../lib/hex-value-yiq-brightness", "$0"],
             ["Math.pow", "$2", -1],
             ["Math.multiply", 128, "$3"],
             ["Math.floor", "$4"],

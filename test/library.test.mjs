@@ -29,7 +29,7 @@ describe('library', function () {
         });
     });
 
-    describe('hex-value-yiq-color', function () {
+    describe('hex-value-yiq-brightness', function () {
         it('should return YIQ value', function () {
             const operation = prepareOperation(this, '#ffcc00');
             const result = execute(operation);
