@@ -279,10 +279,10 @@ The result of `hex-value-alpha-rgba` would be stored at `$0` but also applied as
 The signature of `Import.operations` is the following:
 
 ```json5
-["Import.operations", "path/to/operation", <$0>, <$1>, <$2>, ...]
+["Import.operations", "./relative/path/to/operation", <$0>, <$1>, <$2>, ...]
 ```
 
-`<$N>` means this value will be set at the local position within the operation as `$N`. This allows values to be passed into imported operations as positional arguments. Then within the `path/to/operation`:
+`<$N>` means this value will be set at the local position within the operation as `$N`. This allows values to be passed into imported operations as positional arguments. Then within the `./relative/path/to/operation`:
 
 ```json5
 [
@@ -297,7 +297,7 @@ It is helpful to leave a comment where the positional arguments will be to act a
 A limitation of imported operations is that they do not have access to the `$value` in storage. It must be passed in as a positional argument.
 
 ```json5
-// token-operations/lib/hex-value-alpha-rgba.json5
+// ./my-token-operation.json5
 
 // NOT VALID!
 // Cannot use $value within the imported operation
