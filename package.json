@@ -1,6 +1,6 @@
 {
   "name": "token-operations",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Adds the ability to declare and run operations on design tokens",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
