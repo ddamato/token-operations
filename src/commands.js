@@ -47,7 +47,8 @@ export const commands = {
         operations(filepath, ...args) {
             if (!cachedImports.has(filepath)) {
                 try {
-                    const operations = require(resolve(filepath));
+                    const localRequire = createRequire(process.cwd());
+                    const operations = localRequire(resolve(filepath));
                     if (!Array.isArray(operations)) throw new Error(`import is not Array: ${filepath}`);
                     cachedImports.set(filepath, operations);
                 } catch (err) {
