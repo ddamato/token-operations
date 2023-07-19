@@ -48,7 +48,7 @@ export const commands = {
             if (!cachedImports.has(filepath)) {
                 let operations;
                 try {
-                    operations = require(path.resolve(filepath));
+                    operations = require(resolve(filepath));
                 } catch (err) {
                     operations = require(filepath);
                 }
