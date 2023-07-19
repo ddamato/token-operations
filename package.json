@@ -11,7 +11,7 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./lib/*": "./lib/*"
+    "./lib/*": "./lib/*.json5"
   },
   "files": [
     "dist",

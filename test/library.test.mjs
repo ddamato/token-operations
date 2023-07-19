@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { executeOperation as execute } from '../src/core.js';
 
 function prepareOperation({ test }, ...args) {
-    return ['Import.operations', `./lib/${test.parent.title}`, ...args];
+    return ['Import.operations', `../lib/${test.parent.title}`, ...args];
 }
 
 describe('library', function () {

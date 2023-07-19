@@ -46,14 +46,14 @@ export const commands = {
     Import: createProxy({
         operations(filepath, ...args) {
             if (!cachedImports.has(filepath)) {
+                let operations;
                 try {
-                    const localRequire = createRequire(process.cwd());
-                    const operations = localRequire(resolve(filepath));
-                    if (!Array.isArray(operations)) throw new Error(`import is not Array: ${filepath}`);
-                    cachedImports.set(filepath, operations);
+                    operations = require(path.resolve(filepath));
                 } catch (err) {
-                    throw new Error(err);
+                    operations = require(filepath);
                 }
+                if (!Array.isArray(operations)) throw new Error(`import is not Array: ${filepath}`);
+                cachedImports.set(filepath, operations);
             }
             return args.concat(cachedImports.get(filepath));
         }
