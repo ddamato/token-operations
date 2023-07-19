@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { executeOperation as execute } from '../src/core.js';
 
-describe('operations', function () {
+describe('commands', function () {
 
     it('should pass context', function () {
         const operation = ['Math.add', '$value', '$0'];
@@ -42,12 +42,6 @@ describe('operations', function () {
             const operation = ['String.trim', ' hello world '];
             const result = execute(operation);
             expect(result).to.equal('hello world');
-        });
-
-        it('should String.infix', function () {
-            const operation = ['String.infix', '|', 'h', 'e', 'l', 'l', 'o'];
-            const result = execute(operation);
-            expect(result).to.equal('h|e|l|l|o');
         });
 
         it('should String.capture', function () {

@@ -72,6 +72,28 @@ While this may look immediately overwhelming, **this project recommends that ope
 ```
 This introduces the concept of [imported operations](#imported-operations); reusable sets of lower level operations which can be used multiple times.
 
+> **Warning**
+>
+> **This system is currently unable to process [composite tokens](https://tr.designtokens.org/format/#composite-types)**; where the `$value` is more complex than a primitive value (eg., `'#2435fd'`). An example of a composite token is `"$type":"shadow"`.
+> 
+> ```json
+>{
+>  "shadow-token": {
+>    "$type": "shadow",
+>    "$value": {
+>      "color": "#00000080",
+>      "offsetX": "0.5rem",
+>      "offsetY": "0.5rem",
+>      "blur": "1.5rem",
+>      "spread": "0rem"
+>    }
+>  }
+>}
+>```
+> These tokens are the least common for authors and are skipped in the `$operations` processing altogether due to the complexity of identifying and referencing their values. If you have composite tokens in your file, it is recommended to prepare aliases as non-composite tokens if they require operations and then run the results through another system which can resolve composites.
+>
+> There is a future opportunity to improve this.
+
 ## Anatomy
 
 The `$operations` key expects an array of data. This data could be a value, a token alias, or an "operation" array. 
@@ -90,7 +112,7 @@ Altogether, you can think of the above `$operations` as the following:
 
 ```js
 const $0 = 42;
-const $1 = lookup('numbers.seven');
+const $1 = numbers.seven;
 const $2, $value = add($0, $1);
 ```
 
@@ -105,7 +127,75 @@ The following describes the anatomy of an operation array.
 
 You can think of an operation array like a function, where the first item in the array is the function name, and all other items given are arguments for the function.
 
-> TODO: include commands
+### Commands
+
+The commands are based on JavaScript native functions. To start, commands can inherit from methods found on `Number`, `Math`, and `String`.
+
+```json5
+["Math.max", 2, 15, 7, 4, 12, 1] // Returns 15
+```
+
+The `String` usage is _slightly_ changed to use arguments instead of `this` context. In other words, the first argument is the string to affect.
+
+```json5
+["String.repeat", "oh", 3] // Same as "oh".repeat(3); Returns ohohoh
+```
+
+The purpose of leveraging existing language methods is to reduce the overhead of creating a custom specification for each operation. This makes it easier for other languages to adopt this approach.
+
+> **Warning**
+>
+> **The expectation for commands is to return a single primitive value.** In some native methods (eg., `String.split()`), a more complex value could be returned. The resolver has no method of accessing the complex results of these commands. While the resolver does not explicitly stop them from being used, they should be avoided by operation authors.
+>
+> There may be a future opportunity for improvement in this area.
+
+There are some commands that have been included which are not native to JavaScript.
+
+#### `Math.add` & `Math.multiply`
+
+These are added to avoid string parsing. They will add or multiply all of the arguments provided returning the result. You can also use these methods to subtract or divide.
+
+```json5
+["Math.multiply", 3, 4, .5] // Returns 6
+```
+
+#### `String.infix`
+
+This works like `Array.join()` on the arguments where the first argument is the joiner. You must provide a joiner string, even if empty.
+
+```json5
+["String.infix", "", "Hello", "World"] // Returns HelloWorld
+```
+This command was created as a feature enhancement of `String.concat` to allow for a joiner. It is the least necessary to this specification but will prove helpful.
+
+#### `String.capture`
+
+This accepts a Regular Expression with a capture group. It will return the first string that meets the capture or an empty string `''`. This will not return any metadata about the match.
+
+```json5
+["String.capture", "#23fd40", "#([0-9A-Fa-f]{2})"] // Returns 23
+```
+
+This command was created to limit the metadata of a Regular Expression result.
+
+#### `Import.operations`
+
+`Import` is a special category of commands specific to the need of importing. See [Imported Operations](#imported-operations) for details.
+
+> **Note**
+>
+> The expectation is to keep the amount of custom commands low to reduce additional specifications from being necessary. As an example, the ability to check equality is not included as a single command. Instead, an operation author would use existing commands to determine equality. As an example, determining if `$0` (`3`) is greater than `$1` (`5`):
+>
+>```json5
+>[
+>  3,
+>  5
+>  ["Math.pow", "$1", -1], // 1/5
+>  ["Math.multiply", "$0", "$2"], // 3/5 
+>  ["Math.floor", "$3"] // 0, false
+>]
+>```
+> Operations will need some creativity to keep the number of commands low but easily transferable across languages.
 
 ### Aliases
 
@@ -198,16 +288,16 @@ The result of `hex-value-alpha-rgba` would be stored at `$0` but also applied as
 The signature of `Import.operations` is the following:
 
 ```json5
-["Import.operations", "path/to/operation", "arg-index0", "arg-index1", "arg-index2", ...]
+["Import.operations", "path/to/operation", <$0>, <$1>, <$2>, ...]
 ```
 
-`arg-indexN` means this value will be set at the local position within the operation as `$N`. This allows values to be passed into imported operations as positional arguments. Then within the `path/to/operation`:
+`<$N>` means this value will be set at the local position within the operation as `$N`. This allows values to be passed into imported operations as positional arguments. Then within the `path/to/operation`:
 
 ```json5
 [
-  // arg-index0
-  // arg-index1,
-  // arg-index2,
+  // @param <$0> - First input,
+  // @param <$1> - Second input,
+  // @param <$2> - Third input,
   ["Math.add", "$0", "$1", "$2"]
 ]
 ```
@@ -264,4 +354,6 @@ You can have several imported operations within an operation set. Here is an exa
 }
 ```
 
-This is possible because the nested operation has its own set of local indexes. In other words, in the root operation set, `$1` is the resolved value of `{color.dark}`. Inside the `hex-value-yiq-brightness` nested operation, `$1` is the result of whatever the second operation is within `hex-value-yiq-brightness`. The local indexes are not available between operation sets; positional arguments must be passed to share values. The result of a nested operation is set at the parent's local index where it was positioned. In the above example, the result of `hex-value-yiq-brightness` is set at `$2` in the root operation set and used in the following operation.
+This is possible because the nested operation has its own set of local indexes. In other words, in the root operation set, `$1` is the resolved value of `{color.dark}`. Inside the `hex-value-yiq-brightness` nested operation, `$1` is the result of whatever the second operation is within `hex-value-yiq-brightness`.
+
+**The local indexes are not available between operation sets**; positional arguments must be passed to share values. The result of a nested operation is set at the parent's local index where it was positioned. In the above example, the result of `hex-value-yiq-brightness` is set at `$2` in the root operation set and used in the following operation.

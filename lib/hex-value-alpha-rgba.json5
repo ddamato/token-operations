@@ -7,6 +7,6 @@
     ["Number.parseInt", "$2", 16], // Transform red channel hexadecimal to decimal
     ["Number.parseInt", "$3", 16], // Transform green channel hexadecimal to decimal
     ["Number.parseInt", "$4", 16], // Transform blue channel hexadecimal to decimal
-    ["String.infix", ",", "$5", "$6", "$7", "$1"], // Comma separate values
-    ["String.infix", "", "rgba(", "$8", ")"] // Returns 'rgba(hex-as-rgb, $0)'
+    ["String.concat", "$5", ",", "$6", ",", "$7", ",", "$1"], // Comma separate values
+    ["String.concat", "rgba(", "$8", ")"] // Returns 'rgba(hex-as-rgb, $0)'
 ]

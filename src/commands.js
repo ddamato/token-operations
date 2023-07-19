@@ -36,9 +36,6 @@ export const commands = {
     }, (prop) => Reflect.get(Number, prop)),
 
     String: createProxy({
-        infix(str, ...args) {
-            return args.join(str)
-        },
         capture(str, rgx, flag) {
             const result = str.match(new RegExp(rgx, flag));
             return result?.length && ~result.index ? result[1] : '';

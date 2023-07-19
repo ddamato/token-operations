@@ -3,5 +3,5 @@
     // @param {Number} $1 - Current step
     // @param {String} $2 - Root font size
     ["Math.pow", "$0", "$1"], // Exponential growth
-    ["String.infix", "", "calc(", "$3", " * ", "$2", ")"] // Returns 'calc($0^$1 * $2)'
+    ["String.concat", "calc(", "$3", " * ", "$2", ")"] // Returns 'calc($0^$1 * $2)'
 ]
