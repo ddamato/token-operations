@@ -58,12 +58,11 @@ Returns a [YIQ color brightness](https://en.wikipedia.org/wiki/YIQ) of the given
 ### Usage
 
 ```json5
-["Import.operations", "token-operations/lib/hex-value-yiq-brightness", <$0>, <$1>]
+["Import.operations", "token-operations/lib/hex-value-yiq-brightness", <$0>]
 ```
 
 
 - `<$0>`: A hex color which includes the `#` symbol.
-- `<$1>`: The alpha amount between `0` and `1`.
 
 ---
 
