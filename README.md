@@ -159,15 +159,6 @@ These are added to avoid string parsing. They will add or multiply all of the ar
 ["Math.multiply", 3, 4, .5] // Returns 6
 ```
 
-#### `String.infix`
-
-This works like `Array.join()` on the arguments where the first argument is the joiner. You must provide a joiner string, even if empty.
-
-```json5
-["String.infix", "", "Hello", "World"] // Returns HelloWorld
-```
-This command was created as a feature enhancement of `String.concat` to allow for a joiner. It is the least necessary to this specification but will prove helpful.
-
 #### `String.capture`
 
 This accepts a Regular Expression with a capture group. It will return the first string that meets the capture or an empty string `''`. This will not return any metadata about the match.
