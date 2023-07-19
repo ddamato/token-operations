@@ -44,7 +44,7 @@ Within the `$operations` key is an ordered set of instructions to take to create
       ["Math.pow", "$1", 2],
 
       // calc(Math.pow({typography.scale}) * {typography.base-size}) set as new $value
-      ["String.infix", "", "calc(", "$2", " * ", "$0", ")"]
+      ["String.concat", "calc(", "$2", " * ", "$0", ")"]
     ]
   }
 }
@@ -235,7 +235,7 @@ The root operations set has access to a special `$value` reference, which refers
       ["Math.pow", "$1", 2],
 
       // The original '1rem' is used in the final output for the calc
-      ["String.infix", "", "calc(", "$2", " * ", "$value", ")"]
+      ["String.concat", "calc(", "$2", " * ", "$value", ")"]
     ]
   }
 }
@@ -257,8 +257,8 @@ The `Import.operations` command can inject a set of operations into a parent set
     ["Number.parseInt", "$2", 16], // Transform red channel hexadecimal to decimal
     ["Number.parseInt", "$3", 16], // Transform green channel hexadecimal to decimal
     ["Number.parseInt", "$4", 16], // Transform blue channel hexadecimal to decimal
-    ["String.infix", ",", "$5", "$6", "$7", "$1"], // Comma separate values
-    ["String.infix", "", "rgba(", "$8", ")"] // Returns 'rgba(hex-as-rgb, $0)'
+    ["String.concat", "$5", ",", "$6", ",", "$7", ",", "$1"], // Comma separate values
+    ["String.concat", "rgba(", "$8", ")"] // Returns 'rgba(hex-as-rgb, $0)'
 ]
 ```
 
