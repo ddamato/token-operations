@@ -1,6 +1,6 @@
 {
   "name": "token-operations",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Adds the ability to declare and run operations on design tokens",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -33,7 +33,10 @@
     "prepublishOnly": "npm test && npm run build",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
-  "keywords": ["design tokens", "operations"],
+  "keywords": [
+    "design tokens",
+    "operations"
+  ],
   "author": "Donnie D'Amato <fauxserious@gmail.com>",
   "license": "ISC",
   "repository": {
