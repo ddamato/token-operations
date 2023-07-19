@@ -53,7 +53,7 @@ describe('commands', function () {
 
     describe('Import', function () {
         it('should Import.operations', function () {
-            const operation = ['Import.operations', '../lib/hex-value-alpha-rgba', "#ffcc00", 0.2]
+            const operation = ['Import.operations', './lib/hex-value-alpha-rgba', "#ffcc00", 0.2]
             const result = execute(operation);
             expect(result).to.equal('rgba(255,204,0,0.2)');
         });

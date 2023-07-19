@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
@@ -43,17 +44,17 @@ export const commands = {
     }, (prop) => (str, ...args) => Reflect.get(String.prototype, prop).call(str, ...args)),
 
     Import: createProxy({
-        operations(path, ...args) {
-            if (!cachedImports.has(path)) {
+        operations(filepath, ...args) {
+            if (!cachedImports.has(filepath)) {
                 try {
-                    const operations = require(path);
-                    if (!Array.isArray(operations)) throw new Error(`import is not Array: ${path}`);
-                    cachedImports.set(path, operations);
+                    const operations = require(resolve(filepath));
+                    if (!Array.isArray(operations)) throw new Error(`import is not Array: ${filepath}`);
+                    cachedImports.set(filepath, operations);
                 } catch (err) {
                     throw new Error(err);
                 }
             }
-            return args.concat(cachedImports.get(path));
+            return args.concat(cachedImports.get(filepath));
         }
     }, () => Function.prototype),
 }
