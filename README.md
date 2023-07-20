@@ -10,11 +10,11 @@ import tokenOperations from 'token-operations';
 
 export default tokenOperations(tokens);
 ```
-This assumes that the `.json` file has token operations as described below. The system will also accept `.json5` files with supports comments among other features.
+This assumes that the `.json` file has token operations as described below. The system will also accept `.json5` files which supports comments among other features.
 
 ## Syntax
 
-The concept is to include a `$operations` key on a design token based on the [DTCG specifications](https://tr.designtokens.org/) existing at the same level as `$value`. Assume the following abridged tokens.json file structure:
+The concept is to include a `$operations` key on a design token based on the [DTCG specifications](https://tr.designtokens.org/) existing at the same level as `$value`. Assume the following abridged `tokens.json` file structure:
 
 ```json5
 {
@@ -92,7 +92,7 @@ This introduces the concept of [imported operations](#imported-operations); reus
 >```
 > These tokens are the least common for authors and are skipped in the `$operations` processing altogether due to the complexity of identifying and referencing their values. If you have composite tokens in your file, it is recommended to prepare aliases as non-composite tokens if they require operations and then run the results through another system which can resolve composites.
 >
-> There is a future opportunity to improve this.
+> There may be a future opportunity for improvement in this area.
 
 ## Anatomy
 
@@ -156,7 +156,7 @@ There are some commands that have been included which are not native to JavaScri
 These are added to avoid string parsing. They will add or multiply all of the arguments provided returning the result. You can also use these methods to subtract or divide.
 
 ```json5
-["Math.multiply", 3, 4, .5] // Returns 6
+["Math.multiply", 3, 4, 0.5] // Returns 6
 ```
 
 #### `String.capture`
@@ -190,7 +190,7 @@ This command was created to limit the metadata of a Regular Expression result.
 
 ### Aliases
 
-When referencing token aliases, the operations will attempt to resolve the alias _and_ perform any operations that might exist on the token before returning that value. As an example, if an alias for `{button-bg-hover}` itself has an operation which darkens the color at the token. The operation of darkening the color will occur first before and the resulting value will be return.
+When referencing token aliases, the operations will attempt to resolve the alias _and_ perform any operations that might exist on the token before returning that value. As an example, if an alias for `{button-bg-hover}` itself has an operation which darkens the color at the token. The operation of darkening the color will occur first before and the resulting value will be returned.
 
 
 ```json5
@@ -219,9 +219,11 @@ A limitation of the system is that **aliases cannot be used directly in operatio
 ]
 ```
 
-### Root Operations Set
+The process will also skip tokens that are currently being processed; where circular references can occur. The check for this involves storing the path to the current token in memory in a "processing" state while other aliases can be addressed (with similar state storage). After being resolved, the state is changed to "processed". If another alias expects the value from a token with completed operations; the operations will avoid being reprocessed and simply return the previously resolved value.
 
-The set of operations found at the same level as `$value` in a token is known as the "root operation set" for the token. This distinction is made because it is possible to run nested operations.
+### Root Operation Set
+
+The set of operations found at the same level as `$value` in a token is known as the "root operation set" for the token. This distinction is made because it is possible to import additional operations.
 
 The root operations set has access to a special `$value` reference, which refers to the orignal token value. If this is an alias, it will be resolved before performing the operation.
 
@@ -348,3 +350,5 @@ You can have several imported operations within an operation set. Here is an exa
 This is possible because the nested operation has its own set of local indexes. In other words, in the root operation set, `$1` is the resolved value of `{color.dark}`. Inside the `hex-value-yiq-brightness` nested operation, `$1` is the result of whatever the second operation is within `hex-value-yiq-brightness`.
 
 **The local indexes are not available between operation sets**; positional arguments must be passed to share values. The result of a nested operation is set at the parent's local index where it was positioned. In the above example, the result of `hex-value-yiq-brightness` is set at `$2` in the root operation set and used in the following operation.
+
+[Design Tokens Community Group Issue #224: Token Operations](https://github.com/design-tokens/community-group/issues/224)
