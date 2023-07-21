@@ -82,6 +82,21 @@ function getValue(path, tokens) {
 }
 
 /**
+ * Determines if given token should be skipped in processing.
+ * 
+ * @param {Object} token - A single token entry.
+ * @returns {Boolean} - Determines if this entry should be skipped.
+ */
+ function isToken(token) {
+    // Only attempt to process token entries which may include $value or $operations
+    if (typeof token !== 'object') return;
+    // Only attempt to process token entries with a primitive $value entry
+    if ('$value' in token) return typeof token.$value !== 'object';
+    // If no $value, process $operations array for $value
+    return Array.isArray(token.$operations);
+}
+
+/**
  * Gets the resolved value from a given value, which might be an alias.
  * 
  * @param {String|Number} value - The $value of a token, which might be an alias.
@@ -138,21 +153,6 @@ function resolvePath(path, tree) {
 }
 
 /**
- * Determines if given token should be skipped in processing.
- * 
- * @param {Object} token - A single token entry.
- * @returns {Boolean} - Determines if this entry should be skipped.
- */
-function allow(token) {
-    // Only attempt to process token entries which may include $value or $operations
-    if (typeof token !== 'object') return;
-    // Only attempt to process token entries with a primitive $value entry
-    if ('$value' in token) return typeof token.$value !== 'object';
-    // If no $value, process $operations array for $value
-    return Array.isArray(token.$operations);
-}
-
-/**
  * Walks the collection of tokens, looking for $operations to resolve.
  * 
  * @param {String} path - A dot-notation path.
@@ -164,8 +164,7 @@ function traverse(path, tree) {
     if (!entry || typeof entry !== 'object') return;
     Object.entries(entry).forEach(([name, token]) => {
         const target = [path, name].filter(Boolean).join('.');
-        if (allow(token)) {
-            console.log(token);
+        if (isToken(token)) {
             token.$value = resolveOperations(target, tree);
             return;
         }

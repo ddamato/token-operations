@@ -31,7 +31,6 @@ describe('token-operations', function () {
         const tokens = read('no-process.json');
         expect(tokens['composite-token'].$value).to.deep.equal(shadow);
         const resolved = tokenOperations(tokens);
-        console.log(resolved);
         expect(resolved['composite-token'].$value).to.deep.equal(shadow);
     });
 
