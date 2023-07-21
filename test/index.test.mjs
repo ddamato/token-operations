@@ -13,6 +13,35 @@ describe('token-operations', function () {
         expect(tokenOperations).to.be.a('function');
     });
 
+    it('should not transform tokens without aliases or operations', function () {
+        const tokens = read('no-process.json');
+        expect(tokens['as-is-token'].$value).to.equal('#ffcc00');
+        const resolved = tokenOperations(tokens);
+        expect(resolved['as-is-token'].$value).to.equal('#ffcc00');
+    });
+
+    it('should not transform composite tokens', function () {
+        const shadow = {
+            "color": "#00000080",
+            "offsetX": "0.5rem",
+            "offsetY": "0.5rem",
+            "blur": "1.5rem",
+            "spread": "0rem"
+        };
+        const tokens = read('no-process.json');
+        expect(tokens['composite-token'].$value).to.deep.equal(shadow);
+        const resolved = tokenOperations(tokens);
+        console.log(resolved);
+        expect(resolved['composite-token'].$value).to.deep.equal(shadow);
+    });
+
+    it('should resolve operations without a $value set', function () {
+        const tokens = read('no-value.json');
+        expect(tokens['primary-color-overlay'].$value).to.not.exist;
+        const resolved = tokenOperations(tokens);
+        expect(resolved['primary-color-overlay'].$value).to.equal('rgba(255,252,0,0.5)');
+    });
+
     it('should resolve aliases without operations', function () {
         const tokens = read('alias.json');
         expect(tokens['primary-color-overlay'].$value).to.equal('{color.yellow.500}');

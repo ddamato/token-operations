@@ -1,0 +1,25 @@
+{
+  "primary-color-overlay": {
+    "$type": "color",
+    "$operations": [
+      "{color.yellow.500}",
+      0.5,
+      ["String.capture", "$0", "#([0-9A-Fa-f]{2})"],
+      ["String.capture", "$0", "#(?:[0-9A-Fa-f]{2})([0-9A-Fa-f]{2})"],
+      ["String.capture", "$0", "#(?:[0-9A-Fa-f]{4})([0-9A-Fa-f]{2})"],
+      ["Number.parseInt", "$2", 16],
+      ["Number.parseInt", "$3", 16],
+      ["Number.parseInt", "$4", 16],
+      ["String.concat", "$5", ",", "$6", ",", "$7", ",", "$1"],
+      ["String.concat", "rgba(", "$8", ")"]
+    ]
+  },
+  "color": {
+    "yellow": {
+      "500": {
+        "$type": "color",
+        "$value": "#fffc00"
+      }
+    }
+  }
+}

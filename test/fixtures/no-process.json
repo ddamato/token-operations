@@ -1,0 +1,19 @@
+{
+    "composite-token": {
+        "$type": "shadow",
+        "$value": {
+            "color": "#00000080",
+            "offsetX": "0.5rem",
+            "offsetY": "0.5rem",
+            "blur": "1.5rem",
+            "spread": "0rem"
+        },
+        "$operations": [
+            ["String.repeat", "$value", 3]
+        ]
+    },
+    "as-is-token": {
+        "$type": "color",
+        "$value": "#ffcc00"
+    }
+}
